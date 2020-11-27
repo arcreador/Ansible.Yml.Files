@@ -1,0 +1,25 @@
+- hosts: all
+  tasks:
+  -  package:
+          name: "docker"
+          state: present
+     become: true
+
+  -  file:
+          path: /webFiles
+          state: directory
+     become: true
+  
+  -  copy:
+          src: "/root/test.html"          
+          dest: "/webFiles/"
+     become: true
+  
+  -  command: docker pull httpd:latest
+     become: true
+
+  -  command: docker run -d -p 8080:80 --name webserver1 httpd:latest
+     become: true
+  
+  -  command: docker cp /webFiles/test.html webserver1:/usr/local/apache2/htdocs/avinash.html
+     become: true

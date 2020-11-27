@@ -1,0 +1,46 @@
+- hosts: all
+  become: true
+  vars_prompt:
+        -  name: image
+           private: no
+           prompt: "Enter The Image Name You Wanted to pull"
+   
+  tasks:
+
+  - yum_repository:
+      baseurl: "https://download.docker.com/linux/centos/7/x86_64/stable"
+      name: "dockerrepo"
+      description: "docker repository"
+      gpgcheck: no
+
+
+  - package:
+      name: "docker"
+      skip_broken: yes
+      state: present
+  
+  - service:
+      name: docker
+      state: started  
+
+  - pip:
+      name: "docker"
+
+  - docker_image:
+      name: "{{ image }}"
+      source: pull
+      state: present
+  
+  - copy:
+      content: "!!!!!!!!!!!!!..ARTH TASK 10- Successfully completed..!!!!!!!!!!!!!!"
+      dest: "/var/www/html/index.html"
+
+  - docker_container:
+      name: "arth10"
+      image: "{{ image}}"
+      exposed_ports: "80"
+      ports: "8080:80"
+      state: started
+      volumes: "/var/www/html:/usr/local/apache2/htdocs/"
+
+  
